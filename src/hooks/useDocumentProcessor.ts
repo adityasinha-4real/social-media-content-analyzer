@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { MAX_OCR_PAGES_PER_DOCUMENT } from '../constants';
 import { validateFile } from '../lib/validate';
 import { createError, ExtractionError } from '../lib/errors';
 import { extractText, cancelOcr } from '../lib/extract';
@@ -75,6 +76,9 @@ export function useDocumentProcessor(): UseDocumentProcessorResult {
           stageLabel: 'Done',
           progress: 100,
           extractedText: text,
+          warning: result.ocrCapped
+            ? `This document has more scanned pages than the ${MAX_OCR_PAGES_PER_DOCUMENT}-page OCR limit. Text past that point was skipped.`
+            : null,
         });
       } catch (err) {
         const kind = err instanceof ExtractionError ? err.kind : 'Corrupt';
@@ -97,6 +101,7 @@ export function useDocumentProcessor(): UseDocumentProcessorResult {
         stageLabel: '',
         extractedText: null,
         error: null,
+        warning: null,
       }));
 
       setItems((prev) => [...prev, ...newItems]);

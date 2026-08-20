@@ -89,7 +89,14 @@ export default function App() {
             activeItem.state === 'error' && activeItem.error ? (
               <ErrorBanner error={activeItem.error} />
             ) : showEditor ? (
-              <TextEditor value={text} onChange={handleTextChange} fileName={activeItem.file.name} />
+              <>
+                {activeItem.warning ? (
+                  <p className="warning-banner" role="status">
+                    {activeItem.warning}
+                  </p>
+                ) : null}
+                <TextEditor value={text} onChange={handleTextChange} fileName={activeItem.file.name} />
+              </>
             ) : (
               <div className="preview">
                 <h2>Extracted text</h2>

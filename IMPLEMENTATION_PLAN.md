@@ -319,6 +319,13 @@ Each session must end with the project in a working, committed state.
   clean. Confirm `git ls-files` contains no `node_modules`, `dist`, or `.env`. Confirm the
   deployed URL matches local behaviour.
 - **End state**: repo, hosted URL, README, and the 200-word write-up all complete.
+- **Status**: done. Full verification matrix passed against `vite build && vite preview`
+  (digital, scanned, mixed, PNG, JPEG, corrupt, password-protected, blank page, ~13.6 MB file,
+  non-English text, plus the session 1/2/3 regressions). OCR page cap and its warning banner
+  verified on a 22-page all-image PDF (pages 1-20 recognised, 21-22 skipped). Keyboard
+  accessibility verified (Tab reaches the dropzone, Enter/Space open the picker, visible focus
+  ring). Mobile layout and 44px touch targets verified at 390px width. `npm run build` and
+  `npm test` both clean; `git ls-files` has no `node_modules`, `dist`, or `.env`.
 
 ---
 
@@ -346,12 +353,12 @@ why the static client-side architecture was chosen.
 - [x] Live hosted URL that works on a first visit from a clean browser
 - [x] Digital PDF, scanned PDF, and image all extract correctly
 - [x] Analysis panel produces metrics, platform fit, and suggestions
-- [ ] All error states produce a specific, actionable message
-- [ ] Loading and progress states visible for every async stage
-- [ ] `README.md` explains the approach and the architectural reasoning
-- [ ] `APPROACH.md` is at most 200 words
-- [ ] Exactly 4 runtime dependencies
-- [ ] `npm run build` and `npm test` both clean
+- [x] All error states produce a specific, actionable message
+- [x] Loading and progress states visible for every async stage
+- [x] `README.md` explains the approach and the architectural reasoning
+- [x] `APPROACH.md` is at most 200 words
+- [x] Exactly 4 runtime dependencies
+- [x] `npm run build` and `npm test` both clean
 
 ---
 

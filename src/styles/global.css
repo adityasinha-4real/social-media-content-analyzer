@@ -9,6 +9,8 @@
   --color-danger: #c62828;
   --color-danger-bg: #fdecea;
   --color-success: #1b8a5a;
+  --color-warning: #8a5a1b;
+  --color-warning-bg: #fdf3e6;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -51,6 +53,20 @@ h2,
 h3 {
   margin: 0 0 var(--space-2);
   line-height: 1.2;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 1.125rem;
+}
+
+h3 {
+  font-size: 1rem;
 }
 
 p {
@@ -60,6 +76,11 @@ p {
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .app {
@@ -75,6 +96,7 @@ button {
 .app__subtitle {
   color: var(--color-text-muted);
   max-width: 60ch;
+  font-size: 0.9375rem;
 }
 
 .app__main {
@@ -106,5 +128,29 @@ button {
 @media (max-width: 720px) {
   .app__main {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .app__panel {
+    padding: var(--space-3);
+  }
+
+  /* Comfortable ~44px touch targets for the small text-buttons that are
+     fine as compact links on desktop but too thin to tap reliably. */
+  .file-queue__remove,
+  .file-queue__cancel,
+  .error-banner__dismiss {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 }

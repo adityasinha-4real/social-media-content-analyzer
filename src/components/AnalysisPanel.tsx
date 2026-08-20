@@ -15,11 +15,12 @@ export function AnalysisPanel({ analysis, platform, onPlatformChange }: Analysis
   const limits = PLATFORM_LIMITS[platform];
   const fit = analysis.platformFit[platform];
   const scoreStyle = { '--score': analysis.score.total } as CSSProperties;
+  const scoreTier = analysis.score.total >= 70 ? 'good' : analysis.score.total >= 40 ? 'mid' : 'low';
 
   return (
     <div className="analysis-panel">
       <div className="analysis-panel__score">
-        <div className="score-ring" style={scoreStyle}>
+        <div className={`score-ring score-ring--${scoreTier}`} style={scoreStyle}>
           <span>{analysis.score.total}</span>
         </div>
         <div>

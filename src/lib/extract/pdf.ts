@@ -1,5 +1,6 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import type { PDFDocumentLoadingTask, PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
+import { MAX_OCR_PAGES_PER_DOCUMENT } from '../../constants';
 import { ExtractionError } from '../errors';
 import { isSparsePage, reconstructPageText, type PositionedItem } from './layout';
 import { recognizeText } from './ocr';
@@ -33,6 +34,8 @@ export interface PdfExtractionOptions {
 export interface PdfExtractionResult {
   pages: string[];
   ocrPagesUsed: number;
+  /** True when the document had more OCR-eligible pages than MAX_OCR_PAGES_PER_DOCUMENT and some were skipped. */
+  ocrCapped: boolean;
 }
 
 // pdfjs-dist doesn't re-export TextItem/TextMarkedContent from its package
@@ -101,6 +104,7 @@ export async function extractFromPdf(file: File, options: PdfExtractionOptions =
 
   const pages: string[] = [];
   let ocrPagesUsed = 0;
+  let ocrCapped = false;
 
   try {
     for (let pageNum = 1; pageNum <= doc.numPages; pageNum += 1) {
@@ -113,6 +117,16 @@ export async function extractFromPdf(file: File, options: PdfExtractionOptions =
       let pageText = reconstructPageText(positioned);
 
       if (isSparsePage(pageText, viewport.width, viewport.height)) {
+        if (ocrPagesUsed >= MAX_OCR_PAGES_PER_DOCUMENT) {
+          // Over the cap: leave this page's text as whatever the (likely
+          // near-empty) text layer gave us, flag it, and move on rather
+          // than let OCR run unbounded on a huge scanned document.
+          ocrCapped = true;
+          onProgress?.({ stage: 'extracting', current: pageNum, total: doc.numPages });
+          pages.push(pageText);
+          continue;
+        }
+
         if (isCancelled?.()) throw new ExtractionError('Cancelled');
         onProgress?.({ stage: 'ocr', current: pageNum - 1, total: doc.numPages });
 
@@ -133,5 +147,5 @@ export async function extractFromPdf(file: File, options: PdfExtractionOptions =
     await loadingTask.destroy();
   }
 
-  return { pages, ocrPagesUsed };
+  return { pages, ocrPagesUsed, ocrCapped };
 }

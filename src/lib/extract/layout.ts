@@ -97,10 +97,15 @@ const MIN_TEXT_CHARS = 40;
 /**
  * Characters per square device-pixel below which a page reads as "mostly
  * blank with a caption" rather than a real text page — tuned against a
- * typical 612x792pt page rendered at 1x, where a full paragraph lands
- * comfortably above this and a scanned page with a stray watermark doesn't.
+ * typical 612x792pt page rendered at 1x. Deliberately low: the MIN_TEXT_CHARS
+ * floor above already catches near-empty pages, so this only needs to catch
+ * a page that's mostly image with a little incidental text (a caption, a
+ * stamp). Set too high, it misfires on ordinary short documents - a one-page
+ * memo with a few sentences has real but low density purely because most of
+ * the page is margin, and routing that through OCR instead of its own
+ * perfectly good text layer only degrades the result.
  */
-const MIN_TEXT_DENSITY = 0.0006;
+const MIN_TEXT_DENSITY = 0.00015;
 
 /** True when a page's text layer is too thin to trust, so it should be OCR'd instead. */
 export function isSparsePage(pageText: string, viewportWidth: number, viewportHeight: number): boolean {

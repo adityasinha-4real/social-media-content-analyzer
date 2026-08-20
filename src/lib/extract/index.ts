@@ -15,6 +15,8 @@ export interface ExtractionResult {
   /** Raw text per page (or a single entry for a standalone image), before normalisation. */
   pages: string[];
   ocrPagesUsed: number;
+  /** True when the document had more OCR-eligible pages than the cap and some were skipped. */
+  ocrCapped: boolean;
 }
 
 function isPdfFile(file: File): boolean {
@@ -42,5 +44,5 @@ export async function extractText(file: File, options: ExtractionOptions = {}): 
     throw new ExtractionError('NoTextFound');
   }
 
-  return { pages: [text], ocrPagesUsed: 1 };
+  return { pages: [text], ocrPagesUsed: 1, ocrCapped: false };
 }

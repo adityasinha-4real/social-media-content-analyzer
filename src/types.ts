@@ -30,6 +30,8 @@ export interface QueuedFile {
   stageLabel: string;
   extractedText: string | null;
   error: ProcessingError | null;
+  /** Non-blocking notice (e.g. the OCR page cap was hit) shown alongside a successful result. */
+  warning: string | null;
 }
 
 // --- Analysis engine -------------------------------------------------------
