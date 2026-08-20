@@ -39,3 +39,19 @@ export function createError(kind: ErrorKind, overrideMessage?: string): Processi
     action: copy.action,
   };
 }
+
+/**
+ * Thrown by the extraction pipeline (lib/extract, lib/normalize) instead of
+ * returning a ProcessingError directly, so the pipeline stays plain async
+ * functions and the state-machine mapping happens in one place:
+ * useDocumentProcessor's catch block.
+ */
+export class ExtractionError extends Error {
+  readonly kind: ErrorKind;
+
+  constructor(kind: ErrorKind, overrideMessage?: string) {
+    super(overrideMessage ?? ERROR_COPY[kind].message);
+    this.name = 'ExtractionError';
+    this.kind = kind;
+  }
+}

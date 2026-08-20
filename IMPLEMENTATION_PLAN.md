@@ -273,6 +273,7 @@ Each session must end with the project in a working, committed state.
 - **Verify**: drop a valid PDF, an oversized file, and a `.docx`, and confirm three distinct
   outcomes. Push to GitHub on `main`, connect Vercel, confirm the live URL loads.
 - **End state**: deployed URL exists on day one. Deployment risk is retired before the hard work.
+- **Status**: done. Live at https://social-media-content-analyzer-woad.vercel.app/ (commit 8d1db05).
 
 ### Session 2: real extraction
 
@@ -288,6 +289,7 @@ Each session must end with the project in a working, committed state.
   text; a screenshot produces text; a 20-page PDF reports sane progress; cancelling mid-OCR
   leaves no stuck state. Test against `vite build && vite preview`, not just dev mode.
 - **End state**: any supported file yields normalised text on screen.
+- **Status**: done. All five verify scenarios passed against `vite build && vite preview`.
 
 ### Session 3: analysis engine and results UI
 
@@ -338,9 +340,9 @@ why the static client-side architecture was chosen.
 
 ## 10. Definition of done
 
-- [ ] Public GitHub repo, branch `main`, no ignored artefacts committed
-- [ ] Live hosted URL that works on a first visit from a clean browser
-- [ ] Digital PDF, scanned PDF, and image all extract correctly
+- [x] Public GitHub repo, branch `main`, no ignored artefacts committed
+- [x] Live hosted URL that works on a first visit from a clean browser
+- [x] Digital PDF, scanned PDF, and image all extract correctly
 - [ ] Analysis panel produces metrics, platform fit, and suggestions
 - [ ] All error states produce a specific, actionable message
 - [ ] Loading and progress states visible for every async stage

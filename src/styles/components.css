@@ -87,13 +87,26 @@
   font-size: 0.8125rem;
 }
 
-.file-queue__remove {
+.file-queue__actions {
   margin-top: var(--space-2);
+  display: flex;
+  gap: var(--space-3);
+}
+
+.file-queue__remove,
+.file-queue__cancel {
   background: none;
   border: none;
-  color: var(--color-danger);
   font-size: 0.8125rem;
   padding: 0;
+}
+
+.file-queue__remove {
+  color: var(--color-danger);
+}
+
+.file-queue__cancel {
+  color: var(--color-text-muted);
 }
 
 .progress-bar {

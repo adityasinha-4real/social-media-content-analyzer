@@ -2,105 +2,25 @@ import { useCallback, useState } from 'react';
 import { Dropzone } from './components/Dropzone';
 import { FileQueue } from './components/FileQueue';
 import { ErrorBanner } from './components/ErrorBanner';
-import { validateFile } from './lib/validate';
-import { FAKE_PIPELINE_STEP_MS } from './constants';
-import type { ProcessingState, QueuedFile } from './types';
-
-function createId(): string {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-type UpdateItem = (id: string, patch: Partial<QueuedFile>) => void;
-
-/**
- * Stand-in for the real extraction pipeline (session 2). Walks a file through
- * the same processing states the real pipeline will use, so every stage of
- * the UI is reachable before any actual PDF or OCR handling exists.
- */
-async function runFakePipeline(item: QueuedFile, updateItem: UpdateItem): Promise<void> {
-  const isImage = item.file.type.startsWith('image/');
-  const stages: { state: ProcessingState; label: string }[] = isImage
-    ? [
-        { state: 'ocr', label: 'Running OCR' },
-        { state: 'analyzing', label: 'Analyzing content' },
-      ]
-    : [
-        { state: 'extracting', label: 'Extracting text' },
-        { state: 'analyzing', label: 'Analyzing content' },
-      ];
-
-  for (const stage of stages) {
-    updateItem(item.id, { state: stage.state, stageLabel: stage.label, progress: 0 });
-    const steps = 5;
-    for (let step = 1; step <= steps; step += 1) {
-      await delay(FAKE_PIPELINE_STEP_MS);
-      updateItem(item.id, { progress: (step / steps) * 100 });
-    }
-  }
-
-  updateItem(item.id, {
-    state: 'done',
-    stageLabel: 'Done',
-    progress: 100,
-    extractedText: `[placeholder] Extracted text for "${item.file.name}" will appear here once real extraction lands.`,
-  });
-}
+import { useDocumentProcessor } from './hooks/useDocumentProcessor';
 
 export default function App() {
-  const [items, setItems] = useState<QueuedFile[]>([]);
+  const { items, addFiles, removeItem, cancelItem } = useDocumentProcessor();
   const [activeId, setActiveId] = useState<string | null>(null);
-
-  const updateItem = useCallback<UpdateItem>((id, patch) => {
-    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
-  }, []);
-
-  const processItem = useCallback(
-    async (item: QueuedFile) => {
-      updateItem(item.id, { state: 'validating', stageLabel: 'Validating file' });
-      const error = await validateFile(item.file);
-      if (error) {
-        updateItem(item.id, { state: 'error', error, stageLabel: 'Failed' });
-        return;
-      }
-      await runFakePipeline(item, updateItem);
-    },
-    [updateItem],
-  );
-
-  const handleFilesSelected = useCallback(
-    (files: File[]) => {
-      const newItems: QueuedFile[] = files.map((file) => ({
-        id: createId(),
-        file,
-        state: 'idle',
-        progress: 0,
-        stageLabel: '',
-        extractedText: null,
-        error: null,
-      }));
-
-      setItems((prev) => [...prev, ...newItems]);
-      setActiveId((prev) => prev ?? newItems[0]?.id ?? null);
-
-      for (const item of newItems) {
-        void processItem(item);
-      }
-    },
-    [processItem],
-  );
 
   const handleSelect = useCallback((id: string) => setActiveId(id), []);
 
-  const handleRemove = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    setActiveId((prev) => (prev === id ? null : prev));
-  }, []);
+  const handleRemove = useCallback(
+    (id: string) => {
+      removeItem(id);
+      setActiveId((prev) => (prev === id ? null : prev));
+    },
+    [removeItem],
+  );
 
-  const activeItem = items.find((item) => item.id === activeId) ?? null;
+  // Nothing explicitly selected yet (fresh queue, or the selection got
+  // removed) falls back to the most recently added file.
+  const activeItem = items.find((item) => item.id === activeId) ?? items[items.length - 1] ?? null;
 
   return (
     <div className="app">
@@ -113,8 +33,14 @@ export default function App() {
 
       <main className="app__main">
         <section className="app__panel">
-          <Dropzone onFilesSelected={handleFilesSelected} />
-          <FileQueue items={items} activeId={activeId} onSelect={handleSelect} onRemove={handleRemove} />
+          <Dropzone onFilesSelected={addFiles} />
+          <FileQueue
+            items={items}
+            activeId={activeItem?.id ?? null}
+            onSelect={handleSelect}
+            onRemove={handleRemove}
+            onCancel={cancelItem}
+          />
         </section>
 
         <section className="app__panel app__panel--preview">
