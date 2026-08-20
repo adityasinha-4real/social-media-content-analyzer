@@ -1,5 +1,7 @@
 # Social Media Content Analyzer
 
+Deployed Link : https://social-media-content-analyzer-woad.vercel.app/
+
 Upload a PDF or image, get the text out of it (including scanned documents,
 via OCR), edit it to fix any mistakes, and see how it reads as a social
 media post — character/word counts, per-platform fit against X, LinkedIn,
