@@ -302,6 +302,8 @@ Each session must end with the project in a working, committed state.
 - **Verify**: paste a known short post and hand-check the counts; switch platforms and confirm
   verdicts change; edit text and confirm metrics update without re-extracting.
 - **End state**: a working analyzer, not an extractor.
+- **Status**: done. Hand-checked metrics matched exactly on a known test post; platform switching
+  and live re-analysis on edit both verified against `vite build && vite preview`.
 
 ### Session 4: hardening, tests, docs, submission
 
@@ -343,7 +345,7 @@ why the static client-side architecture was chosen.
 - [x] Public GitHub repo, branch `main`, no ignored artefacts committed
 - [x] Live hosted URL that works on a first visit from a clean browser
 - [x] Digital PDF, scanned PDF, and image all extract correctly
-- [ ] Analysis panel produces metrics, platform fit, and suggestions
+- [x] Analysis panel produces metrics, platform fit, and suggestions
 - [ ] All error states produce a specific, actionable message
 - [ ] Loading and progress states visible for every async stage
 - [ ] `README.md` explains the approach and the architectural reasoning
